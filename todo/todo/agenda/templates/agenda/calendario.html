@@ -1,0 +1,22 @@
+{% extends 'base.html' %} 
+{% load calendario %}
+
+{% block content %}
+<div class="row-fluid">
+    <div class="span12">
+        <h3>Ano: <span id="ano"></span> Mês: <span id="mes"></span></h3>
+        {% controls 'from-inline pull-right' %}
+    </div>
+</div>
+<div class="clear-fix">
+</div>
+<div class="row">
+    <div class="span7">
+        {% calendario '' %}
+
+    </div>
+    <div class="span3">
+
+    </div>
+</div>
+{% endblock %}

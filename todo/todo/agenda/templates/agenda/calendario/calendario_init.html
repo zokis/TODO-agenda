@@ -1,0 +1,46 @@
+{% load calendario %}
+{% load static %}
+{% autoescape off %}
+<script>
+(function($) {
+    "use strict";
+    var options = {
+    events_source: '{{ events_url }}',
+    view: '{{ view }}',
+    language: 'pt-BR',
+    tmpl_path: '{% get_static_prefix %}tmpls/',
+    tmpl_cache: false,
+    first_day: {{ first_day }},
+       onAfterEventsLoad: function(events) {
+	if(!events) {
+		return;
+        }
+    },
+	classes: {
+		months: {
+			general: 'label'
+		}
+	}
+};
+
+var	calendar = $('#calendar').calendar(options);
+	$('.btn-group button[data-calendar-nav]').each(function() {
+		var self = $(this);
+		self.click(function() {
+			calendar.navigate(self.data('calendar-nav'));
+		});
+	});
+
+	$('.btn-group button[data-calendar-view]').each(function() {
+		var self = $(this);
+		self.click(function() {
+			calendar.view(self.data('calendar-view'));
+		});
+	});
+    var data_ini = calendar.getStartDate();
+    $('#ano').html(data_ini.getFullYear());
+    $('#mes').html(data_ini.getMonth());
+}(jQuery));
+
+</script>
+{% endautoescape %}

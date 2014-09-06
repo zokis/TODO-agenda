@@ -6,16 +6,12 @@ from django.contrib.auth.views import logout, login
 from todo.core.forms import AuthenticationForm
 
 
-from django.contrib import admin
-admin.autodiscover()
+urlpatterns = patterns(
+    '',
 
-urlpatterns = patterns('',
-    # ADMIN SITE URL 
-    url(r'^admin/', include(admin.site.urls)),
-
-
-    url(r'^$', TemplateView.as_view(template_name='base.html')),
+    #url(r'^$', TemplateView.as_view(template_name='base.html')),
     url(r'^', include('todo.core.urls')),
+    url(r'^', include('todo.agenda.urls')),
 
     # Logins
     url(r'^logout/$', logout, {"next_page": "/"}, name="logout"),
