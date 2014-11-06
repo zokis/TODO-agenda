@@ -38,3 +38,11 @@ class CalendarioEvento(models.Model):
 
     def __unicode__(self):
         return self.nome
+
+
+class Departamento(models.Model):
+    nome = models.CharField(max_length=255)
+    funcionarios = models.ManyToManyField(User, related_name='funcionarios')
+
+    def __unicode__(self):
+        return self.nome

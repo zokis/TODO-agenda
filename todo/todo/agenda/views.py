@@ -2,8 +2,13 @@
 import datetime
 
 from django.views.generic import ListView, TemplateView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.forms.models import modelform_factory
+from django.core.urlresolvers import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
 
-from .models import CalendarioEvento
+from .models import CalendarioEvento, Departamento
 from .serializers import evento_serializer
 from .utils import timestamp_to_datetime
 
@@ -39,3 +44,44 @@ class CalendarioJsonListView(ListView):
 class CalendarioView(TemplateView):
 
     template_name = 'agenda/calendario.html'
+
+
+class SuperuserRequiredMixin(object):
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def dispatch(self, *args, **kwargs):
+        return super(SuperuserRequiredMixin, self).dispatch(*args, **kwargs)
+
+
+DepartamentoForm = modelform_factory(Departamento)
+
+
+class DepartamentoCreateView(SuperuserRequiredMixin, CreateView):
+    class Meta:
+        model = Departamento
+        success_url = reverse_lazy('departamento_list')
+        form_class = DepartamentoForm
+
+
+class DepartamentoDeleteView(SuperuserRequiredMixin, DeleteView):
+    class Meta:
+        template_name = 'confirm_delete.html'
+        model = Departamento
+        success_url = reverse_lazy('departamento_list')
+
+
+class DepartamentoListView(SuperuserRequiredMixin, ListView):
+    class Meta:
+        model = Departamento
+        paginate_by = 15
+
+
+class DepartamentoUpdateView(SuperuserRequiredMixin, ListView):
+    class Meta:
+        model = Departamento
+        success_url = reverse_lazy('departamento_list')
+        form_class = DepartamentoForm
+
+departamento_create = DepartamentoCreateView.as_view()
+departamento_delete = DepartamentoDeleteView.as_view()
+departamento_list = ListView.as_view()
+departamento_update = UpdateView.as_view()

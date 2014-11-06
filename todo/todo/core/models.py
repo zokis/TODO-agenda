@@ -37,6 +37,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     nome = models.CharField(verbose_name=u'Nome', max_length=100)
 
     is_active = models.BooleanField('ativo', default=True,)
+    is_staff = models.BooleanField('staff', default=False,)
     date_joined = models.DateTimeField('data de cadastro', default=timezone.now)
 
     objects = UserManager()
