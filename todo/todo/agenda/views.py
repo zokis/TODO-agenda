@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .models import CalendarioEvento, Departamento
 from .serializers import evento_serializer
 from .utils import timestamp_to_datetime
+from .forms import EventoForm
 
 
 class CalendarioJsonListView(ListView):
@@ -47,9 +48,6 @@ class CalendarioView(TemplateView):
     template_name = 'agenda/calendario.html'
 
 
-EventoForm = modelform_factory(CalendarioEvento)
-
-
 @login_required
 def evento_form(request, pk=None):
     if pk:
@@ -57,7 +55,7 @@ def evento_form(request, pk=None):
     else:
         evento = None
 
-    form = EventoForm(request.POST or None, instance=evento)
+    form = EventoForm(request.POST or None, instance=evento, user=request.user)
 
     if request.method == "POST":
         if form.is_valid():
