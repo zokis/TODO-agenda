@@ -14,4 +14,6 @@ urlpatterns = patterns(
         CalendarioView.as_view(),
         name='calendario'
     ),
+    url(r'^evento_form/$', 'evento_form', name='evento_form'),
+    url(r'^evento_form/(?P<pk>\d+)/$', 'evento_form', name='evento_form'),
 )

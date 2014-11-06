@@ -34,7 +34,7 @@ class CalendarioEvento(models.Model):
         return datetime_to_timestamp(self.fim)
 
     def get_absolute_url(self):
-        return '/'
+        return '/evento_form/%d/' % self.pk
 
     def __unicode__(self):
         return self.nome

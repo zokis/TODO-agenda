@@ -6,7 +6,8 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.forms.models import modelform_factory
 from django.core.urlresolvers import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .models import CalendarioEvento, Departamento
 from .serializers import evento_serializer
@@ -44,6 +45,33 @@ class CalendarioJsonListView(ListView):
 class CalendarioView(TemplateView):
 
     template_name = 'agenda/calendario.html'
+
+
+EventoForm = modelform_factory(CalendarioEvento)
+
+
+@login_required
+def evento_form(request, pk=None):
+    if pk:
+        evento = get_object_or_404(CalendarioEvento, pk=pk)
+    else:
+        evento = None
+
+    form = EventoForm(request.POST or None, instance=evento)
+
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return redirect(reverse_lazy('evento_form'))
+
+    return render(
+        request,
+        'agenda/evento_form.html',
+        {
+            'form': form,
+            'evento': evento
+        }
+    )
 
 
 class SuperuserRequiredMixin(object):
