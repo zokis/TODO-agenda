@@ -99,3 +99,12 @@ user_deactivate = permission_required('core.delete_user')(
         action='DEACTIVATE'
     )
 )
+
+
+# def profile_edit(request):
+#     form = ProfileEdit(request.POST or None):
+#     if request.method == 'POST':
+#         if form.is_valid():
+#             form.save()
+#             return HttpResponseRedirect(reverse_lazy('profile_edit'))
+#     return 
