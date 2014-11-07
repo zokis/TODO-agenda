@@ -271,3 +271,5 @@ KEEP_LOGGED_KEY = 'keep_me_logged_in'
 # in days
 KEEP_LOGGED_DURATION = 35
 ########## END KEEP LOGGED CONFIGURATION
+
+LOGIN_URL = '/signin/'

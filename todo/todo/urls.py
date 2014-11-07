@@ -49,10 +49,4 @@ urlpatterns = patterns(
     url(r'^user/activate/(?P<pk>\d+)/$', 'todo.core.views.user_activate', name="activate_user"),
     url(r'^user/deactivate/(?P<pk>\d+)/$', 'todo.core.views.user_deactivate', name="deactivate_user"),
     # url(r'^accounts/profile/', 'todo.core.views.profile_edit', name='profile_edit'),
-
-    # Categoria
-    url(r'^list/departamento/$', 'todo.agenda.views.departamento_list', name="departamento_list"),
-    url(r'^create/departamento/$', 'todo.agenda.views.departamento_create', name="departamento_form"),
-    url(r'^update/departamento/(?P<pk>\d+)/$', 'todo.agenda.views.departamento_update', name="departamento_form"),
-    url(r'^delete/departamento/(?P<pk>\d+)/$', 'todo.agenda.views.departamento_delete', name="departamento_delete"),
 )

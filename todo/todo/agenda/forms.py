@@ -21,3 +21,12 @@ class EventoForm(forms.ModelForm):
 
     class Meta:
         model = CalendarioEvento
+
+
+class DepartamentoForm(forms.ModelForm):
+    def __init__(self, *args, **kw):
+        super(DepartamentoForm, self).__init__(*args, **kw)
+        self.fields['funcionarios'].required = False
+
+    class Meta:
+        model = Departamento

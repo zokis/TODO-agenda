@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .models import CalendarioEvento, Departamento
 from .serializers import evento_serializer
 from .utils import timestamp_to_datetime
-from .forms import EventoForm
+from .forms import EventoForm, DepartamentoForm
 
 
 class CalendarioJsonListView(ListView):
@@ -72,42 +72,11 @@ def evento_form(request, pk=None):
     )
 
 
-class SuperuserRequiredMixin(object):
-    @method_decorator(user_passes_test(lambda u: u.is_superuser))
-    def dispatch(self, *args, **kwargs):
-        return super(SuperuserRequiredMixin, self).dispatch(*args, **kwargs)
-
-
-DepartamentoForm = modelform_factory(Departamento)
-
-
-class DepartamentoCreateView(SuperuserRequiredMixin, CreateView):
-    class Meta:
-        model = Departamento
-        success_url = reverse_lazy('departamento_list')
-        form_class = DepartamentoForm
-
-
-class DepartamentoDeleteView(SuperuserRequiredMixin, DeleteView):
-    class Meta:
-        template_name = 'confirm_delete.html'
-        model = Departamento
-        success_url = reverse_lazy('departamento_list')
-
-
-class DepartamentoListView(SuperuserRequiredMixin, ListView):
-    class Meta:
-        model = Departamento
-        paginate_by = 15
-
-
-class DepartamentoUpdateView(SuperuserRequiredMixin, ListView):
-    class Meta:
-        model = Departamento
-        success_url = reverse_lazy('departamento_list')
-        form_class = DepartamentoForm
-
-departamento_create = DepartamentoCreateView.as_view(model=Departamento, success_url=reverse_lazy('departamento_list'),)
-departamento_delete = DepartamentoDeleteView.as_view(model=Departamento, success_url=reverse_lazy('departamento_list'),)
-departamento_list = ListView.as_view(model=Departamento, paginate_by=10)
-departamento_update = UpdateView.as_view(model=Departamento, success_url=reverse_lazy('departamento_list'),)
+departamento_create = user_passes_test(
+    lambda u: u.is_superuser)(CreateView.as_view(model=Departamento, success_url=reverse_lazy('departamento_list')))
+departamento_delete = user_passes_test(
+    lambda u: u.is_superuser)(DeleteView.as_view(model=Departamento, success_url=reverse_lazy('departamento_list')))
+departamento_list = user_passes_test(
+    lambda u: u.is_superuser)(ListView.as_view(queryset=Departamento.objects.all(), paginate_by=10))
+departamento_update = user_passes_test(
+    lambda u: u.is_superuser)(UpdateView.as_view(model=Departamento, success_url=reverse_lazy('departamento_list')))
