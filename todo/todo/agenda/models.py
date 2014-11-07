@@ -44,5 +44,14 @@ class Departamento(models.Model):
     nome = models.CharField(max_length=255)
     funcionarios = models.ManyToManyField(User, related_name='funcionarios')
 
+    @classmethod
+    def get_funcionarios_by_user_dpt(cls, user):
+        dpts = cls.objects.filter(funcionarios__pk=user.pk)
+        funs_pk = set()
+        for dpt in dpts:
+            for fun in dpt.funcionarios.all():
+                funs_pk.add(fun.pk)
+        return User.objects.filter(pk__in=list(funs_pk)).exclude(pk=user.pk)
+
     def __unicode__(self):
         return self.nome

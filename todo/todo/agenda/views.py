@@ -107,7 +107,7 @@ class DepartamentoUpdateView(SuperuserRequiredMixin, ListView):
         success_url = reverse_lazy('departamento_list')
         form_class = DepartamentoForm
 
-departamento_create = DepartamentoCreateView.as_view()
-departamento_delete = DepartamentoDeleteView.as_view()
-departamento_list = ListView.as_view()
-departamento_update = UpdateView.as_view()
+departamento_create = DepartamentoCreateView.as_view(model=Departamento, success_url=reverse_lazy('departamento_list'),)
+departamento_delete = DepartamentoDeleteView.as_view(model=Departamento, success_url=reverse_lazy('departamento_list'),)
+departamento_list = ListView.as_view(model=Departamento, paginate_by=10)
+departamento_update = UpdateView.as_view(model=Departamento, success_url=reverse_lazy('departamento_list'),)
