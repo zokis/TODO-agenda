@@ -15,11 +15,11 @@
         	</tr>
         	<tr>
         		<td>Início:</td>
-        		<td>{{ evento.inicio }}</td>
+        		<td>{{ evento.inicio|default:"---" }}</td>
         	</tr>
         	<tr>
         		<td>Fim:</td>
-        		<td>{{ evento.fim }}</td>
+        		<td>{{ evento.fim|default:"---" }}</td>
         	</tr>
         	<tr>
         		<td>Público:</td>
