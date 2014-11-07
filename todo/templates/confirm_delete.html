@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-<form method="post">
+<form method="post" action=".">
     {% csrf_token %}
     <h4>Você tem certeza que deseja deletar "{{ object }}"?</h4>
     <input type="submit" value="Confirmar" class="btn btn-danger" />

@@ -52,30 +52,40 @@ class CalendarioView(TemplateView):
 def evento_form(request, pk=None):
     if pk:
         evento = get_object_or_404(CalendarioEvento, pk=pk)
+        meu_evento = evento.owner == request.user
     else:
+        meu_evento = True
         evento = None
+    if not meu_evento:
+        form = EventoForm(request.POST or None, instance=evento, user=request.user)
 
-    form = EventoForm(request.POST or None, instance=evento, user=request.user)
+        if request.method == "POST":
+            if form.is_valid():
+                form.save()
+                return redirect(reverse_lazy('evento_form'))
 
-    if request.method == "POST":
-        if form.is_valid():
-            form.save()
-            return redirect(reverse_lazy('evento_form'))
-
-    return render(
-        request,
-        'agenda/evento_form.html',
-        {
-            'form': form,
-            'evento': evento
-        }
-    )
+        return render(
+            request,
+            'agenda/evento_form.html',
+            {
+                'form': form,
+                'evento': evento
+            }
+        )
+    else:
+        return render(
+            request,
+            'agenda/evento.html',
+            {
+                'evento': evento
+            }
+        )
 
 
 departamento_create = user_passes_test(
     lambda u: u.is_superuser)(CreateView.as_view(model=Departamento, success_url=reverse_lazy('departamento_list')))
 departamento_delete = user_passes_test(
-    lambda u: u.is_superuser)(DeleteView.as_view(model=Departamento, success_url=reverse_lazy('departamento_list')))
+    lambda u: u.is_superuser)(DeleteView.as_view(model=Departamento, template_name='confirm_delete.html', success_url=reverse_lazy('departamento_list')))
 departamento_list = user_passes_test(
     lambda u: u.is_superuser)(ListView.as_view(queryset=Departamento.objects.all(), paginate_by=10))
 departamento_update = user_passes_test(

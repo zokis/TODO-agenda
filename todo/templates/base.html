@@ -41,6 +41,17 @@
                 <li>
                     <a href="/">Home</a>
                 </li>
+                <li>
+                    {% if request.user.is_superuser %}
+                    <a href="{% url 'departamento_list' %}">Departamento</a>
+                    {% endif %}
+                </li>
+                <li>
+                    <a href="#">Meus Eventos</a>
+                </li>
+                <li>
+                    <a href="#">Eventos</a>
+                </li>
             </ul>
 
             <ul class="nav navbar-nav pull-right">

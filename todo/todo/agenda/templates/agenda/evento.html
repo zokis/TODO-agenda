@@ -1,0 +1,43 @@
+{% extends 'base.html' %} 
+{% load calendario %}
+
+{% block content %}
+<div class="row-fluid">
+    <div class="span12">
+        <table>
+        	<tr>
+        		<td>Nome:</td>
+        		<td>{{ evento.nome }}</td>
+        	</tr>
+        	<tr>
+        		<td>Tipo:</td>
+        		<td>{{ evento.tipo }}</td>
+        	</tr>
+        	<tr>
+        		<td>Início:</td>
+        		<td>{{ evento.inicio }}</td>
+        	</tr>
+        	<tr>
+        		<td>Fim:</td>
+        		<td>{{ evento.fim }}</td>
+        	</tr>
+        	<tr>
+        		<td>Público:</td>
+        		<td>{{ evento.tipo|yesno:"Sim,Não" }}</td>
+        	</tr>
+        	<tr>
+        		<td colspan="2">Participantes</td>
+        	</tr>
+        	{% for p in evento.participantes.all %}
+	        	<tr>
+	        		<td colspan="2">p</td>
+	        	</tr>
+	        {% empty %}
+	        	<tr>
+	        		<td colspan="2">Nenhum Participante</td>
+	        	</tr>
+        	{% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}
