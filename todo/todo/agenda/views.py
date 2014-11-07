@@ -56,7 +56,7 @@ def evento_form(request, pk=None):
     else:
         meu_evento = True
         evento = None
-    if not meu_evento:
+    if meu_evento:
         form = EventoForm(request.POST or None, instance=evento, user=request.user)
 
         if request.method == "POST":
