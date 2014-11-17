@@ -10,13 +10,13 @@
 
 {% block content %}
 <div class="row-fluid">
-    <div class="span12">
-    	<form method="POST">
-    	{% csrf_token %}
-        {{ form|as_bootstrap }}
-        <input type="submit" class="btn btn-primary" value="Enviar">
-        </form>
-    </div>
+	<div class="span12">
+		<form method="POST" action="{% if form.instance.pk %}{% url 'evento_form' form.instance.pk %}{% else %}{% url 'evento_form' %}{% endif %}">
+            		{% csrf_token %}
+            		{{ form|as_bootstrap }}
+            		<input type="submit" class="btn btn-primary" value="Enviar">
+		</form>
+	</div>
 </div>
 {% endblock %}
 
