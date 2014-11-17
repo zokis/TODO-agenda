@@ -18,6 +18,7 @@ urlpatterns = patterns(
     url(r'^evento/meus/$', 'meus_eventos', name='meus_eventos'),
     url(r'^evento/form/$', 'evento_form', {'publico': False}, name='evento_form'),
     url(r'^evento/form/(?P<pk>\d+)/$', 'evento_form', {'publico': False}, name='evento_form'),
+    url(r'^evento/participar/(?P<pk>\d+)/$', 'participar', name='evento_participar'),
     url(r'^evento/publico/form/$', 'evento_form', {'publico': True}, name='evento_publico_form'),
     url(r'^evento/publico/form/(?P<pk>\d+)/$', 'evento_form', {'publico': True}, name='evento_publico_form'),
     url(r'^evento/delete/(?P<pk>\d+)/$', 'evento_delete', name="evento_delete"),

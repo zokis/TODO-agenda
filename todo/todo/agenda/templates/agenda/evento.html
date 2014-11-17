@@ -4,6 +4,11 @@
 {% block content %}
 <div class="row-fluid">
     <div class="span12">
+        {% if evento.publico %}
+        {% if not participante %}
+            <a href="{% url 'evento_participar' evento.pk %}" class="btn btn-primary">Participar</a>
+        {% endif %}
+        {% endif %}
         <table>
         	<tr>
         		<td>Nome:</td>
@@ -30,7 +35,7 @@
         	</tr>
         	{% for p in evento.participantes.all %}
 	        	<tr>
-	        		<td colspan="2">p</td>
+	        		<td colspan="2">{{ p }}</td>
 	        	</tr>
 	        {% empty %}
 	        	<tr>

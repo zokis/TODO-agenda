@@ -77,19 +77,28 @@ class MeusventosList(ListView):
 meus_eventos = login_required(MeusventosList.as_view())
 
 
+def participar(request, pk):
+    evento = get_object_or_404(CalendarioEvento, pk=pk, publico=True)
+    evento.participantes.add(request.user)
+    return redirect(reverse_lazy('evento_form', kwargs={'pk': pk}))
+
+
 def evento_form(request, publico=True, pk=None):
     template_name = 'agenda/evento.html'
+    participante = False
     if pk:
         if request.user.is_authenticated():
             evento = get_object_or_404(CalendarioEvento, pk=pk)
             meu_evento = evento.owner == request.user
+            participante = True
         else:
             evento = get_object_or_404(CalendarioEvento, pk=pk, publico=True)
             meu_evento = False
+            participante = evento.participantes.filter(pk=request.pk).count() >= 1
     else:
         meu_evento = True
         evento = None
-    context = {'evento': evento, 'publico': publico}
+    context = {'evento': evento, 'publico': publico, 'participante': participante}
 
     if meu_evento:
         template_name = 'agenda/evento_form.html'

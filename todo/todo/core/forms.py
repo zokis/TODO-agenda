@@ -10,6 +10,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from .models import User
 
+from todo.agenda.models import Departamento
+
 
 DEFAULT_STOPWORDS = ('de,o,a,os,as')
 
@@ -22,10 +24,33 @@ else:
 class UserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirmação', widget=forms.PasswordInput)
+    departamentos = forms.ModelMultipleChoiceField(queryset=Departamento.objects)
 
     class Meta:
         model = User
-        fields = ('email',)
+        fields = ('email', 'nome', 'is_active', 'is_superuser')
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords diferentes")
+        return password2
+
+    def save(self, commit=True):
+        user = super(UserCreationForm, self).save(commit=False)
+        user.set_password(self.cleaned_data["password2"])
+
+        if commit:
+            user.save()
+            for dpt in self.cleaned_data['departamentos']:
+                dpt.funcionarios.add(user)
+        return user
+
+
+class SelfUserChangeForm(forms.ModelForm):
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Confirmação', widget=forms.PasswordInput)
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -41,18 +66,32 @@ class UserCreationForm(forms.ModelForm):
             user.save()
         return user
 
+    class Meta:
+        model = User
+        fields = ('email', 'nome')
+
 
 class UserChangeForm(forms.ModelForm):
+    departamentos = forms.ModelMultipleChoiceField(queryset=Departamento.objects)
+
     def __init__(self, *args, **kwargs):
         super(UserChangeForm, self).__init__(*args, **kwargs)
-        self.fields['password'] = ReadOnlyPasswordHashField(widget=forms.PasswordInput(attrs={'placeholder': 'password'}))
+        self.fields['departamentos'].initial = Departamento.objects.filter(funcionarios__pk=self.instance.pk)
+
+    def save(self, commit=True):
+        user = super(UserChangeForm, self).save(commit=False)
+        if commit:
+            user.save()
+            for dpt in Departamento.objects.all():
+                dpt.funcionarios.remove(user)
+
+            for dpt in self.cleaned_data['departamentos']:
+                dpt.funcionarios.add(user)
+        return user
 
     class Meta:
         model = User
-        fields = ('email', 'password', 'is_active')
-
-    def clean_password(self):
-        return self.initial["password"]
+        fields = ('email', 'nome', 'is_active', 'is_superuser')
 
 
 AuthenticationForm = type(
@@ -65,6 +104,7 @@ AuthenticationForm = type(
 
 
 class InlineAuthenticationForm(AuthenticationForm):
+
     class Meta:
         widgets = {
             'email': forms.TextInput(attrs={'placeholder': 'email'}),
@@ -73,6 +113,7 @@ class InlineAuthenticationForm(AuthenticationForm):
 
 
 class BaseSearchForm(forms.Form):
+
     """See http://gregbrown.co.nz/code/django-simple-search/ for details"""
 
     STOPWORD_LIST = DEFAULT_STOPWORDS.split(',')
