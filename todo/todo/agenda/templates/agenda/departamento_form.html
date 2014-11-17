@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 
+{% load bootstrap3 %}
+
+
 {% block title %}
     Formulário
 {% endblock %}
@@ -7,8 +10,8 @@
 {% block content %}
 <form method="POST" action="{% if not form.instance.pk %}{% url 'departamento_form' %}{% else %}{% url 'departamento_form' pk=form.instance.pk %}{% endif %}">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="{% if not form.instance.pk %}Cadastrar{% else %}Alterar{% endif %}" />
-    <input type="reset" value="Cancelar" />
+    {% bootstrap_form form %}
+    <input type="submit" value="{% if not form.instance.pk %}Cadastrar{% else %}Alterar{% endif %}" class="btn btn-primary" />
+    <input type="reset" value="Cancelar"  class="btn btn-warning" />
 </form>
 {% endblock %}

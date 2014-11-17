@@ -14,12 +14,12 @@ urlpatterns = patterns(
         CalendarioView.as_view(),
         name='calendario'
     ),
-    url(r'^evento/form/$', 'evento_form', name='evento_form'),
-    url(r'^evento/publico/form/$', 'evento_form', {'publico': True}, name='evento_publico_form'),
-    url(r'^evento/meus/$', 'meus_eventos', name='meus_eventos'),
     url(r'^evento/list/$', 'eventos', name='eventos'),
-    url(r'^evento/publico/form/(?P<pk>\d+)/$', 'evento_form', {'publico': True}, name='evento_publico_form'),
+    url(r'^evento/meus/$', 'meus_eventos', name='meus_eventos'),
+    url(r'^evento/form/$', 'evento_form', {'publico': False}, name='evento_form'),
     url(r'^evento/form/(?P<pk>\d+)/$', 'evento_form', {'publico': False}, name='evento_form'),
+    url(r'^evento/publico/form/$', 'evento_form', {'publico': True}, name='evento_publico_form'),
+    url(r'^evento/publico/form/(?P<pk>\d+)/$', 'evento_form', {'publico': True}, name='evento_publico_form'),
     url(r'^evento/delete/(?P<pk>\d+)/$', 'evento_delete', name="evento_delete"),
 
     url(r'^departamento/list/$', 'departamento_list', name="departamento_list"),

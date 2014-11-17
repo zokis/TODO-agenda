@@ -197,7 +197,7 @@ THIRD_PARTY_APPS = (
     # Database migration helpers:
     #'south',
     #'django_extensions',
-    'bootstrap_toolkit',
+    'bootstrap3',
 )
 
 # Apps specific for this project go here.

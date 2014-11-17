@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponseRedirect, Http404
+from django.db.models import Q
 
 from .models import CalendarioEvento, Departamento
 from .serializers import evento_serializer
@@ -19,7 +20,10 @@ class CalendarioJsonListView(ListView):
     template_name = 'agenda/calendario_eventos.html'
 
     def get_queryset(self):
-        queryset = CalendarioEvento.objects.filter(publico=True)
+        if self.request.user.is_authenticated():
+            queryset = CalendarioEvento.objects.filter(Q(owner=self.request.user) | Q(participantes=self.request.user))
+        else:
+            queryset = CalendarioEvento.objects.filter(publico=True)
         from_date = self.request.GET.get('from', False)
         to_date = self.request.GET.get('to', False)
 
@@ -38,6 +42,7 @@ class CalendarioJsonListView(ListView):
             queryset = queryset.filter(
                 fim__lte=timestamp_to_datetime(to_date)
             )
+        print queryset
 
         return evento_serializer(queryset)
 

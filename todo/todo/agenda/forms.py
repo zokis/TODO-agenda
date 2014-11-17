@@ -6,8 +6,6 @@ from .models import CalendarioEvento
 from todo.core.models import User
 from todo.agenda.models import Departamento
 
-from bootstrap_toolkit.widgets import BootstrapDateInput
-
 
 class EventoForm(forms.ModelForm):
     def __init__(self, *args, **kw):
@@ -30,7 +28,6 @@ class EventoForm(forms.ModelForm):
     class Meta:
         model = CalendarioEvento
         exclude = ['owner', 'publico']
-        widgets = {'inicio': BootstrapDateInput, 'fim': BootstrapDateInput}
 
 
 class EventoPublicoForm(EventoForm):
