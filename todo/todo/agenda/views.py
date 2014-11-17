@@ -3,17 +3,15 @@ import datetime
 
 from django.views.generic import ListView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from django.forms.models import modelform_factory
 from django.core.urlresolvers import reverse_lazy
-from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import get_object_or_404, redirect, render
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponseRedirect, Http404
 
 from .models import CalendarioEvento, Departamento
 from .serializers import evento_serializer
 from .utils import timestamp_to_datetime
-from .forms import EventoForm, DepartamentoForm
+from .forms import EventoForm, DepartamentoForm, EventoPublicoForm
 
 
 class CalendarioJsonListView(ListView):
@@ -51,17 +49,21 @@ class CalendarioView(TemplateView):
 
 class EventosList(ListView):
     template_name = 'agenda/evento_list.html'
+
     def get_queryset(self):
-        queryset = CalendarioEvento.objects.filter(participantes=self.request.user)
+        if self.request.user.is_authenticated():
+            queryset = CalendarioEvento.objects.filter(participantes=self.request.user)
+        else:
+            queryset = CalendarioEvento.objects.filter(publico=True)
         return queryset
 
 
-eventos = login_required(EventosList.as_view())
-
+eventos = EventosList.as_view()
 
 
 class MeusventosList(ListView):
     template_name = 'agenda/evento_list.html'
+
     def get_queryset(self):
         queryset = CalendarioEvento.objects.filter(owner=self.request.user)
         return queryset
@@ -70,45 +72,65 @@ class MeusventosList(ListView):
 meus_eventos = login_required(MeusventosList.as_view())
 
 
-@login_required
-def evento_form(request, pk=None):
+def evento_form(request, publico=True, pk=None):
+    template_name = 'agenda/evento.html'
     if pk:
-        evento = get_object_or_404(CalendarioEvento, pk=pk)
-        meu_evento = evento.owner == request.user
+        if request.user.is_authenticated():
+            evento = get_object_or_404(CalendarioEvento, pk=pk)
+            meu_evento = evento.owner == request.user
+        else:
+            evento = get_object_or_404(CalendarioEvento, pk=pk, publico=True)
+            meu_evento = False
     else:
         meu_evento = True
         evento = None
+    context = {'evento': evento}
+
     if meu_evento:
-        form = EventoForm(request.POST or None, instance=evento, user=request.user)
+        template_name = 'agenda/evento_form.html'
+        if publico:
+            form = EventoPublicoForm(request.POST or None, instance=evento, user=request.user)
+        else:
+            form = EventoForm(request.POST or None, instance=evento, user=request.user)
 
         if request.method == "POST":
             if form.is_valid():
                 form.save()
                 return redirect(reverse_lazy('evento_form'))
+        context['form'] = form
+    return render(
+        request,
+        template_name,
+        context
+    )
 
-        return render(
-            request,
-            'agenda/evento_form.html',
-            {
-                'form': form,
-                'evento': evento
-            }
-        )
-    else:
-        return render(
-            request,
-            'agenda/evento.html',
-            {
-                'evento': evento
-            }
-        )
+
+class EventoDeleteView(DeleteView):
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.owner != request.user:
+            raise Http404
+
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+    def delete(self, request, *args, **kwargs):
+        if self.object.owner != request.user:
+            raise Http404
+        self.object = self.get_object()
+        self.object.delete()
+        return HttpResponseRedirect(self.get_success_url())
+
+
+evento_delete = user_passes_test(
+    lambda u: u.is_superuser)(DeleteView.as_view(model=CalendarioEvento, template_name='confirm_delete.html', success_url=reverse_lazy('meus_eventos')))
 
 
 departamento_create = user_passes_test(
-    lambda u: u.is_superuser)(CreateView.as_view(model=Departamento, success_url=reverse_lazy('departamento_list')))
+    lambda u: u.is_superuser)(CreateView.as_view(form_class=DepartamentoForm, model=Departamento, success_url=reverse_lazy('departamento_list')))
 departamento_delete = user_passes_test(
     lambda u: u.is_superuser)(DeleteView.as_view(model=Departamento, template_name='confirm_delete.html', success_url=reverse_lazy('departamento_list')))
 departamento_list = user_passes_test(
     lambda u: u.is_superuser)(ListView.as_view(queryset=Departamento.objects.all(), paginate_by=10))
 departamento_update = user_passes_test(
-    lambda u: u.is_superuser)(UpdateView.as_view(model=Departamento, success_url=reverse_lazy('departamento_list')))
+    lambda u: u.is_superuser)(UpdateView.as_view(form_class=DepartamentoForm, model=Departamento, success_url=reverse_lazy('departamento_list')))

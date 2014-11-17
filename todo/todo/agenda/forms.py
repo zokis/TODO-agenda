@@ -14,13 +14,10 @@ class EventoForm(forms.ModelForm):
         user = kw.pop('user')
         self.user = user
         super(EventoForm, self).__init__(*args, **kw)
-        self.fields['participantes'].queryset = User.objects.filter().exclude(pk=user.pk)
+        self.fields['participantes'].queryset = User.objects.all().exclude(pk=user.pk)
 
         if not user.is_superuser:
             self.fields['participantes'].queryset = Departamento.get_funcionarios_by_user_dpt(user)
-            if self.instance:
-                if self.instance.publico:
-                    self.fields['participantes'].queryset = User.objects.filter().exclude(pk=user.pk)
 
     def save(self, commit=True):
         instance = super(EventoForm, self).save(commit=False)
@@ -33,6 +30,15 @@ class EventoForm(forms.ModelForm):
         model = CalendarioEvento
         exclude = ['owner']
         widgets = {'inicio': BootstrapDateInput, 'fim': BootstrapDateInput}
+
+
+class EventoPublicoForm(EventoForm):
+    def __init__(self, *args, **kw):
+        super(EventoPublicoForm, self).__init__(*args, **kw)
+        self.fields['participantes'].queryset = User.objects.all().exclude(pk=self.user.pk)
+
+    class Meta(EventoForm.Meta):
+        pass
 
 
 class DepartamentoForm(forms.ModelForm):
