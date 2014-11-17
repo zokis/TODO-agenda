@@ -22,13 +22,14 @@ class EventoForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super(EventoForm, self).save(commit=False)
         instance.owner = self.user
+        instance.publico = False
         if commit:
             instance.save()
         return instance
 
     class Meta:
         model = CalendarioEvento
-        exclude = ['owner']
+        exclude = ['owner', 'publico']
         widgets = {'inicio': BootstrapDateInput, 'fim': BootstrapDateInput}
 
 
@@ -36,6 +37,13 @@ class EventoPublicoForm(EventoForm):
     def __init__(self, *args, **kw):
         super(EventoPublicoForm, self).__init__(*args, **kw)
         self.fields['participantes'].queryset = User.objects.all().exclude(pk=self.user.pk)
+
+    def save(self, commit=True):
+        instance = super(EventoPublicoForm, self).save(commit=False)
+        instance.publico = True
+        if commit:
+            instance.save()
+        return instance
 
     class Meta(EventoForm.Meta):
         pass

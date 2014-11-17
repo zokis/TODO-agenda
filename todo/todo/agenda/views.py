@@ -84,7 +84,7 @@ def evento_form(request, publico=True, pk=None):
     else:
         meu_evento = True
         evento = None
-    context = {'evento': evento}
+    context = {'evento': evento, 'publico': publico}
 
     if meu_evento:
         template_name = 'agenda/evento_form.html'
@@ -96,7 +96,8 @@ def evento_form(request, publico=True, pk=None):
         if request.method == "POST":
             if form.is_valid():
                 form.save()
-                return redirect(reverse_lazy('evento_form'))
+                form.save_m2m()
+                return redirect(reverse_lazy('meus_eventos'))
         context['form'] = form
     return render(
         request,
