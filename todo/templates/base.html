@@ -49,9 +49,12 @@
                         <a href="{% url 'departamento_list' %}">Usuários</a>
                     </li>
                 {% endif %}
+
+                {% if request.user.is_authenticated %}
                 <li>
                     <a href="{% url 'meus_eventos' %}">Meus Eventos</a>
                 </li>
+                {% endif %}
                 <li>
                     <a href="{% url 'eventos' %}">Eventos</a>
                 </li>
