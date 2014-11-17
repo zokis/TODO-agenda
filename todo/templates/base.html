@@ -36,21 +36,24 @@
 
     <div class="header navbar">
         <div class="container">
-            <a class="navbar-brand" href="/">TODO</a>
+            <a class="navbar-brand" href="/">Agenda Empresarial</a>
             <ul class="nav navbar-nav">
                 <li>
                     <a href="/">Home</a>
                 </li>
+                {% if request.user.is_superuser %}
+                    <li>
+                        <a href="{% url 'departamento_list' %}">Departamentos</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'departamento_list' %}">Usuários</a>
+                    </li>
+                {% endif %}
                 <li>
-                    {% if request.user.is_superuser %}
-                    <a href="{% url 'departamento_list' %}">Departamento</a>
-                    {% endif %}
+                    <a href="{% url 'meus_eventos' %}">Meus Eventos</a>
                 </li>
                 <li>
-                    <a href="#">Meus Eventos</a>
-                </li>
-                <li>
-                    <a href="#">Eventos</a>
+                    <a href="{% url 'eventos' %}">Eventos</a>
                 </li>
             </ul>
 
@@ -90,6 +93,8 @@
     {% calendario_js %}
     {% calendario_init %}
     {% endblock javascript %}
+    {% block js %}
+    {% endblock js %}
 </body>
 
 </html>

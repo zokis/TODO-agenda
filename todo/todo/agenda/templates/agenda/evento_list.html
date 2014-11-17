@@ -1,0 +1,46 @@
+{% extends 'base.html' %} 
+{% load calendario %}
+
+{% block content %}
+<div class="row-fluid">
+    <div class="span12">
+    	<a href="{% url 'evento_form' %}" class="btn btn-primary">Novo</a>
+        <table class="table table-bordered table-striped">
+		    <thead>
+		        <tr>
+		            <th>Eventos</th>
+		            <th style="width: 60px;">deletar</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		        {% for evt in object_list %}
+		        <tr>
+		            <td><a href="{% url 'evento_form' evt.pk %}">{{ evt.nome }}</a></td>
+		            <td>
+		                <a href="{% url 'departamento_delete' evt.pk %}" class="btn btn-small btn-danger">
+		                    X
+		                </a>
+		            </td>
+		        </tr>
+		        {% endfor %}
+		    </tbody>
+		</table>
+		<div class="pagination">
+		    <span class="step-links">
+		        {% if 	.has_previous %}
+		            <a href="?page={{ page_obj.previous_page_number }}">anterior</a>
+		        {% endif %}
+
+		        <span class="current">
+		            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+		        </span>
+
+		        {% if page_obj.has_next %}
+		            <a href="?page={{ page_obj.next_page_number }}">próximo</a>
+		        {% endif %}
+		    </span>
+		</div>
+    </div>
+</div>
+
+{% endblock %}

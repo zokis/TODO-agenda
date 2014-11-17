@@ -1,14 +1,28 @@
 {% extends 'base.html' %} 
-{% load calendario %}
+{% load bootstrap_toolkit %}
+
+{% block extra_css %}
+
+{{ form.media.css }}
+
+{% endblock %}
+
 
 {% block content %}
 <div class="row-fluid">
     <div class="span12">
     	<form method="POST">
     	{% csrf_token %}
-        {{ form.as_p }}
+        {{ form|as_bootstrap }}
         <input type="submit" class="btn btn-primary" value="Enviar">
         </form>
     </div>
 </div>
 {% endblock %}
+
+
+{% block js %}
+
+{{ form.media.js }}
+
+{% endblock js %}

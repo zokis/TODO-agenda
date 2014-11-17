@@ -197,6 +197,7 @@ THIRD_PARTY_APPS = (
     # Database migration helpers:
     #'south',
     #'django_extensions',
+    'bootstrap_toolkit',
 )
 
 # Apps specific for this project go here.
@@ -273,3 +274,4 @@ KEEP_LOGGED_DURATION = 35
 ########## END KEEP LOGGED CONFIGURATION
 
 LOGIN_URL = '/signin/'
+LOGIN_REDIRECT_URL = '/'

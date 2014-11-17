@@ -15,6 +15,8 @@ urlpatterns = patterns(
         name='calendario'
     ),
     url(r'^evento_form/$', 'evento_form', name='evento_form'),
+    url(r'^meus_eventos/$', 'meus_eventos', name='meus_eventos'),
+    url(r'^eventos/$', 'eventos', name='eventos'),
     url(r'^evento_form/(?P<pk>\d+)/$', 'evento_form', name='evento_form'),
 
 

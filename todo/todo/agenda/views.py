@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .models import CalendarioEvento, Departamento
 from .serializers import evento_serializer
@@ -46,6 +47,27 @@ class CalendarioJsonListView(ListView):
 class CalendarioView(TemplateView):
 
     template_name = 'agenda/calendario.html'
+
+
+class EventosList(ListView):
+    template_name = 'agenda/evento_list.html'
+    def get_queryset(self):
+        queryset = CalendarioEvento.objects.filter(participantes=self.request.user)
+        return queryset
+
+
+eventos = login_required(EventosList.as_view())
+
+
+
+class MeusventosList(ListView):
+    template_name = 'agenda/evento_list.html'
+    def get_queryset(self):
+        queryset = CalendarioEvento.objects.filter(owner=self.request.user)
+        return queryset
+
+
+meus_eventos = login_required(MeusventosList.as_view())
 
 
 @login_required
