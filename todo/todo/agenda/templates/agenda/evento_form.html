@@ -6,7 +6,7 @@
 <div class="row-fluid">
     <div class="span12">
         <h3>Novo Evento{% if publico %} Público{% endif %}</h3>
-        <form method="POST" action="{% if form.instance.pk %}{% url 'evento_form' form.instance.pk %}{% else %}{% url 'evento_form' %}{% endif %}">
+        <form method="POST" action="{% if form.instance.pk %}{% url action_url form.instance.pk %}{% else %}{% url action_url %}{% endif %}">
             {% csrf_token %}
             {% bootstrap_form form %}
             <input type="submit" class="btn btn-primary" value="{% if not form.instance.pk %}Cadastrar{% else %}Alterar{% endif %}" />

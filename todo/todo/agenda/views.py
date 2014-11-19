@@ -42,7 +42,6 @@ class CalendarioJsonListView(ListView):
             queryset = queryset.filter(
                 fim__lte=timestamp_to_datetime(to_date)
             )
-        print queryset
 
         return evento_serializer(queryset)
 
@@ -103,10 +102,12 @@ def evento_form(request, publico=True, pk=None):
     if meu_evento:
         template_name = 'agenda/evento_form.html'
         if publico:
+            action_url = 'evento_publico_form'
             form = EventoPublicoForm(request.POST or None, instance=evento, user=request.user)
         else:
+            action_url = 'evento_form'
             form = EventoForm(request.POST or None, instance=evento, user=request.user)
-
+        context['action_url'] = action_url
         if request.method == "POST":
             if form.is_valid():
                 form.save()
